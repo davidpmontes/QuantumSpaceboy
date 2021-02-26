@@ -22,6 +22,14 @@
                     "interactions": ""
                 },
                 {
+                    "name": "Secondary",
+                    "type": "Button",
+                    "id": "54a10074-4f4a-45b8-8c55-ebd730943d3f",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
                     "name": "Tow",
                     "type": "Button",
                     "id": "87d7cb1c-265f-45fa-ae92-47a4981b4359",
@@ -33,6 +41,14 @@
                     "name": "Boost",
                     "type": "Button",
                     "id": "a1eb0d78-af3e-4261-b233-da80608078b2",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Start",
+                    "type": "Button",
+                    "id": "9025dfaf-d084-4e01-a465-17bb3c59702e",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
@@ -168,6 +184,50 @@
                     "processors": "",
                     "groups": "Gamepad",
                     "action": "Boost",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b815b41e-3cb9-4f71-a3bc-7fc4fdc631bd",
+                    "path": "<Keyboard>/ctrl",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Start",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1e91e04c-625b-45ca-a3b9-ccc34d9a1a5d",
+                    "path": "<Gamepad>/start",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Start",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9fe821de-1464-412f-99fc-28c6969e47a9",
+                    "path": "<Keyboard>/m",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Secondary",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "322e620b-02ae-4413-9210-af1a907e9a34",
+                    "path": "<Gamepad>/buttonWest",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Secondary",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

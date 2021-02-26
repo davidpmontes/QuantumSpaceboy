@@ -4,7 +4,8 @@ using UnityEngine;
 
 public enum Pools
 {
-    Bullet
+    Bullet,
+    HomingBullet
 };
 
 public class ObjectPool : MonoBehaviour

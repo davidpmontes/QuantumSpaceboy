@@ -152,6 +152,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefabs:
   - {fileID: 2556757826654378058, guid: 94209aa868f11eb46abf3d2169443ba1, type: 3}
+  - {fileID: 451296838885360733, guid: fa14cb82d200e8f46926c1decde988a4, type: 3}
 --- !u!4 &106841613
 Transform:
   m_ObjectHideFlags: 0
@@ -11340,8 +11341,8 @@ GameObject:
   - component: {fileID: 399279275}
   - component: {fileID: 399279277}
   - component: {fileID: 399279276}
-  - component: {fileID: 399279278}
   - component: {fileID: 399279279}
+  - component: {fileID: 399279280}
   m_Layer: 8
   m_Name: solarjetmanship
   m_TagString: Player
@@ -11480,7 +11481,11 @@ MonoBehaviour:
   - {fileID: 5159688558294937228, guid: aa99762c0b00ea245b029e930b5e8076, type: 3}
   - {fileID: -5495713475551249686, guid: aa99762c0b00ea245b029e930b5e8076, type: 3}
   - {fileID: -45233408710285008, guid: aa99762c0b00ea245b029e930b5e8076, type: 3}
-  rotationDegrees: 0
+  primaryWeaponGO: {fileID: 7215635801258047914, guid: ba19db81d07bbdb4eb8ec1fa70fa7e71,
+    type: 3}
+  secondaryWeaponGO: {fileID: 2133042291532614664, guid: c3e21ac67e5a14149ae30c383a6f25ae,
+    type: 3}
+  secondaryTarget: {fileID: 230867213}
 --- !u!114 &399279275
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11549,25 +11554,6 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.3
---- !u!232 &399279278
-DistanceJoint2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 399279271}
-  m_Enabled: 0
-  serializedVersion: 4
-  m_EnableCollision: 0
-  m_ConnectedRigidBody: {fileID: 0}
-  m_BreakForce: Infinity
-  m_BreakTorque: Infinity
-  m_AutoConfigureConnectedAnchor: 0
-  m_Anchor: {x: 0, y: 0}
-  m_ConnectedAnchor: {x: 0, y: 0}
-  m_AutoConfigureDistance: 0
-  m_Distance: 2
-  m_MaxDistanceOnly: 0
 --- !u!120 &399279279
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -11665,6 +11651,25 @@ LineRenderer:
     generateLightingData: 0
   m_UseWorldSpace: 1
   m_Loop: 0
+--- !u!232 &399279280
+DistanceJoint2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 399279271}
+  m_Enabled: 0
+  serializedVersion: 4
+  m_EnableCollision: 0
+  m_ConnectedRigidBody: {fileID: 0}
+  m_BreakForce: Infinity
+  m_BreakTorque: Infinity
+  m_AutoConfigureConnectedAnchor: 0
+  m_Anchor: {x: 0, y: 0}
+  m_ConnectedAnchor: {x: 0, y: 0}
+  m_AutoConfigureDistance: 1
+  m_Distance: 8.321658
+  m_MaxDistanceOnly: 0
 --- !u!1 &453325142
 GameObject:
   m_ObjectHideFlags: 0

@@ -5,6 +5,7 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced
     private UnityEngine.InputSystem.PlayerInput playerInput;
     private Vector2 leftStickInput;
     private bool fireInput;
+    private bool secondaryInput;
     private bool towInput;
     private bool aimLockInput;
     private bool boostInput;
@@ -17,31 +18,41 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced
     [SerializeField] private Sprite[] highFireRotationSprites;
     private int rotationIdx = 0;
     private float nextThrustTime;
-    private float nextFireTime;
     private bool isLowThrust;
     private float shipRotationRads;
-    [SerializeField] private float rotationDegrees;
+    private float rotationDegrees;
 
     private Vector2 thrust;
 
     private const float ROTATION_SPEED = 350f;
     private const float THRUST_SPEED = 500000;
     private const float THRUST_BOOST_SPEED_MULTIPLIER = 2f;
-    private const float BULLET_SPEED = 300f;
 
     private const float TOW_DISTANCE = 2f;
 
     private bool isTowing = false;
-    private DistanceJoint2D distanceJoint2d;
+    private DistanceJoint2D distanceJoint2D;
     private LineRenderer lineRenderer;
+
+    [SerializeField] private GameObject primaryWeaponGO;
+    private IWeapon primaryWeapon;
+
+    [SerializeField] private GameObject secondaryWeaponGO;
+    private IWeapon secondaryWeapon;
+
+    [SerializeField] private GameObject secondaryTarget;
 
     void Awake()
     {
         playerInput = GetComponent<UnityEngine.InputSystem.PlayerInput>();
         rb2d = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        distanceJoint2d = GetComponent<DistanceJoint2D>();
+        distanceJoint2D = GetComponent<DistanceJoint2D>();
         lineRenderer = GetComponent<LineRenderer>();
+        primaryWeapon = primaryWeaponGO.GetComponent<IWeapon>();
+        primaryWeapon.Init();
+        secondaryWeapon = secondaryWeaponGO.GetComponent<IWeapon>();
+        secondaryWeapon.Init();
     }
 
     void Update()
@@ -51,6 +62,7 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced
         CalculateThrust();
         DrawShip();
         Fire();
+        Secondary();
         Tow();
     }
 
@@ -63,6 +75,7 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced
     {
         leftStickInput = playerInput.actions["Move"].ReadValue<Vector2>();
         fireInput = playerInput.actions["Fire"].ReadValue<float>() > 0;
+        secondaryInput = playerInput.actions["Secondary"].ReadValue<float>() > 0;
         boostInput = playerInput.actions["Boost"].ReadValue<float>() > 0;
         var newTowInput = playerInput.actions["Tow"].ReadValue<float>() > 0;
         if (towInput == false && newTowInput == true)
@@ -81,19 +94,15 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced
         if (!fireInput)
             return;
 
-        if (Time.time < nextFireTime)
-        {
+        primaryWeapon.Fire(shipRotationRads, rb2d, transform.position, secondaryTarget);
+    }
+
+    private void Secondary()
+    {
+        if (!secondaryInput)
             return;
-        }
-        else
-        {
-            nextFireTime = Time.time + 0.1f;
-            var bullet = ObjectPool.Instance.GetFromPoolInactive(Pools.Bullet);
-            bullet.SetActive(true);
-            var position = transform.position + (new Vector3(-Mathf.Cos(shipRotationRads), Mathf.Sin(shipRotationRads))) * 0.6f;
-            var velocity = rb2d.velocity + (new Vector2(-Mathf.Cos(shipRotationRads), Mathf.Sin(shipRotationRads))) * BULLET_SPEED * Time.fixedDeltaTime;
-            bullet.GetComponent<Bullet>().Init(position, velocity);
-        }
+
+        secondaryWeapon.Fire(shipRotationRads, rb2d, transform.position, secondaryTarget);
     }
 
     private void Rotate()
@@ -223,9 +232,9 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced
             if (isTowing)            
             {
                 isTowing = false;
-                distanceJoint2d.connectedBody.bodyType = RigidbodyType2D.Static;
-                distanceJoint2d.connectedBody = null;
-                distanceJoint2d.enabled = false;
+                distanceJoint2D.connectedBody.bodyType = RigidbodyType2D.Static;
+                distanceJoint2D.connectedBody = null;
+                distanceJoint2D.enabled = false;
             }
             else
             {
@@ -235,10 +244,10 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced
                     if (collider2D.gameObject.layer == LayerMask.NameToLayer("fuel"))
                     {
                         isTowing = true;
-                        distanceJoint2d.connectedBody = collider2D.gameObject.GetComponent<Rigidbody2D>();
-                        distanceJoint2d.connectedBody.bodyType = RigidbodyType2D.Dynamic;
-                        distanceJoint2d.distance = TOW_DISTANCE;
-                        distanceJoint2d.enabled = true;
+                        distanceJoint2D.connectedBody = collider2D.gameObject.GetComponent<Rigidbody2D>();
+                        distanceJoint2D.connectedBody.bodyType = RigidbodyType2D.Dynamic;
+                        distanceJoint2D.distance = TOW_DISTANCE;
+                        distanceJoint2D.enabled = true;
                         break;
                     }
                 }
@@ -259,7 +268,7 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced
     private void UpdateTowLine()
     {
         lineRenderer.SetPosition(0, transform.position);
-        lineRenderer.SetPosition(1, distanceJoint2d.connectedBody.transform.position);
+        lineRenderer.SetPosition(1, distanceJoint2D.connectedBody.transform.position);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
