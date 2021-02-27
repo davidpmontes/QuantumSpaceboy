@@ -2,11 +2,13 @@
 
 public class BulletWeapon : MonoBehaviour, IWeapon
 {
+    private float intervalSeconds;
     private float nextFireTime = 0;
     private const float BULLET_SPEED = 300f;
 
     public void Init()
     {
+        intervalSeconds = 0.1f;
         nextFireTime = Time.time;
     }
 
@@ -16,10 +18,10 @@ public class BulletWeapon : MonoBehaviour, IWeapon
     }
 
     public void Fire(float shipRotationRads, Rigidbody2D rb2d, Vector3 shipPosition, GameObject target)
-    {
+    {        
         if (Time.time > nextFireTime)
         {
-            nextFireTime = Time.time + 0.1f;
+            nextFireTime = Time.time + intervalSeconds;
             var bullet = ObjectPool.Instance.GetFromPoolInactive(Pools.Bullet);
             bullet.SetActive(true);
             var position = shipPosition + (new Vector3(-Mathf.Cos(shipRotationRads), Mathf.Sin(shipRotationRads))) * 0.6f;

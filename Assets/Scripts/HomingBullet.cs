@@ -19,15 +19,27 @@ public class HomingBullet : MonoBehaviour
         this.velocity = velocity;
         this.target = target;
         StartCoroutine(DestroyAfterTime(lifespanSeconds));
+        StartCoroutine(HomeInOnTargetForTime(1f));
     }
 
     private void FixedUpdate()
     {
-        var dir = (target.transform.position - transform.position).normalized;
-        velocity += (Vector2)dir;
-        velocity.Normalize();
-        velocity *= 10;
         rb2d.MovePosition(rb2d.position + velocity * Time.fixedDeltaTime);
+    }
+
+    private IEnumerator HomeInOnTargetForTime(float durationSeconds)
+    {
+        var endTime = Time.time + durationSeconds;
+        while(true)
+        {
+            if (Time.time > endTime) break;
+
+            var dir = (target.transform.position - transform.position).normalized;
+            velocity += (Vector2)dir;
+            velocity.Normalize();
+            velocity *= 10;
+            yield return new WaitForFixedUpdate();
+        }        
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

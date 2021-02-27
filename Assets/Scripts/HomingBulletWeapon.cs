@@ -2,6 +2,7 @@
 
 public class HomingBulletWeapon : MonoBehaviour, IWeapon
 {
+    private float intervalSeconds = 0.3f;
     private float nextFireTime = 0;
     private const float BULLET_SPEED = 300f;
     private GameObject target;
@@ -15,7 +16,7 @@ public class HomingBulletWeapon : MonoBehaviour, IWeapon
     {
         if (Time.time > nextFireTime)
         {
-            nextFireTime = Time.time + 0.1f;
+            nextFireTime = Time.time + intervalSeconds;
             var homingBullet = ObjectPool.Instance.GetFromPoolInactive(Pools.HomingBullet);
             homingBullet.SetActive(true);
             var velocity = rb2d.velocity + (new Vector2(-Mathf.Cos(shipRotationRads), Mathf.Sin(shipRotationRads))) * BULLET_SPEED * Time.fixedDeltaTime;
