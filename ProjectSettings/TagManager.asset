@@ -17,10 +17,10 @@ TagManager:
   - planet
   - bullet
   - terrain
-  - fuel
+  - towable
   - gascan
   - gravityField
-  - 
+  - tractorZone
   - 
   - 
   - 
