@@ -31,6 +31,7 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced
     private const float TOW_DISTANCE = 2f;
 
     private bool isTowing = false;
+    private FrictionJoint2D frictionJoint2D;
     private DistanceJoint2D distanceJoint2D;
     private LineRenderer lineRenderer;
 
@@ -47,6 +48,7 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced
         playerInput = GetComponent<UnityEngine.InputSystem.PlayerInput>();
         rb2d = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        frictionJoint2D = GetComponent<FrictionJoint2D>();
         distanceJoint2D = GetComponent<DistanceJoint2D>();
         lineRenderer = GetComponent<LineRenderer>();
         primaryWeapon = primaryWeaponGO.GetComponent<IWeapon>();
@@ -232,6 +234,9 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced
             if (isTowing)            
             {
                 isTowing = false;
+                frictionJoint2D.connectedBody = null;
+                frictionJoint2D.enabled = false;
+
                 distanceJoint2D.connectedBody.bodyType = RigidbodyType2D.Static;
                 distanceJoint2D.connectedBody = null;
                 distanceJoint2D.enabled = false;
@@ -244,8 +249,15 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced
                     if (collider2D.gameObject.layer == LayerMask.NameToLayer("fuel"))
                     {
                         isTowing = true;
+                        frictionJoint2D.connectedBody = collider2D.gameObject.GetComponent<Rigidbody2D>();
+                        frictionJoint2D.autoConfigureConnectedAnchor = true;
+                        frictionJoint2D.maxForce = 100;
+                        frictionJoint2D.enabled = true;
+
+
                         distanceJoint2D.connectedBody = collider2D.gameObject.GetComponent<Rigidbody2D>();
                         distanceJoint2D.connectedBody.bodyType = RigidbodyType2D.Dynamic;
+                        distanceJoint2D.connectedBody.gravityScale = 1;
                         distanceJoint2D.distance = TOW_DISTANCE;
                         distanceJoint2D.enabled = true;
                         break;
