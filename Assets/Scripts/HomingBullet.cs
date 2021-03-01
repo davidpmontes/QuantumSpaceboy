@@ -34,6 +34,7 @@ public class HomingBullet : MonoBehaviour
         {
             if (Time.time > endTime) break;
 
+            if (target == null) break;
             var dir = (target.transform.position - transform.position).normalized;
             velocity += (Vector2)dir;
             velocity.Normalize();

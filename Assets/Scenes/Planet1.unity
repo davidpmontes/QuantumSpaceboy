@@ -5121,7 +5121,7 @@ TilemapRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1905495595
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
@@ -16490,7 +16490,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1905495595
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: -5512787700256200696, guid: aa99762c0b00ea245b029e930b5e8076,
     type: 3}
@@ -16584,6 +16584,8 @@ MonoBehaviour:
   - {fileID: 5159688558294937228, guid: aa99762c0b00ea245b029e930b5e8076, type: 3}
   - {fileID: -5495713475551249686, guid: aa99762c0b00ea245b029e930b5e8076, type: 3}
   - {fileID: -45233408710285008, guid: aa99762c0b00ea245b029e930b5e8076, type: 3}
+  rads: 0
+  rotationDegrees: 0
   primaryWeaponGO: {fileID: 7215635801258047914, guid: ba19db81d07bbdb4eb8ec1fa70fa7e71,
     type: 3}
   secondaryWeaponGO: {fileID: 2133042291532614664, guid: c3e21ac67e5a14149ae30c383a6f25ae,
@@ -16634,7 +16636,7 @@ Rigidbody2D:
   m_UseAutoMass: 0
   m_Mass: 1000
   m_LinearDrag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0
   m_GravityScale: 0.3
   m_Material: {fileID: 6200000, guid: 6c89fb5ac3246cb41ac5e37e9c492d8c, type: 2}
   m_Interpolate: 1
@@ -16712,7 +16714,7 @@ LineRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 584273605
-  m_SortingLayer: 4
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Positions:
   - {x: 0, y: 0, z: 0}
@@ -36150,6 +36152,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: BluePlanet
       objectReference: {fileID: 0}
+    - target: {fileID: 5656383240833353883, guid: dec89fed11489874a9890f5c4edd8c0f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5656383240833353887, guid: dec89fed11489874a9890f5c4edd8c0f,
         type: 3}
       propertyPath: m_RootOrder
@@ -36287,6 +36294,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: OrangePlanet
+      objectReference: {fileID: 0}
+    - target: {fileID: 9080196871111492106, guid: a73d130fe91ebc546bb2360c295a6ad7,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9080196871111492117, guid: a73d130fe91ebc546bb2360c295a6ad7,
         type: 3}

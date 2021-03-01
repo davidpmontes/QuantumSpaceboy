@@ -52,6 +52,14 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "Thruster",
+                    "type": "Value",
+                    "id": "4a0a2d8b-0242-484d-b4dd-33266f7d3896",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -228,6 +236,17 @@
                     "processors": "",
                     "groups": "Gamepad",
                     "action": "Secondary",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "df424a02-0a52-465f-8ca4-5d38de0707aa",
+                    "path": "<Gamepad>/rightTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Thruster",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

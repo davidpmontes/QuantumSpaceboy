@@ -3,12 +3,13 @@
 public class Spaceboy : MonoBehaviour, IGravityInfluenced
 {
     private UnityEngine.InputSystem.PlayerInput playerInput;
+    private float thrusterInput;
     private Vector2 leftStickInput;
     private bool fireInput;
     private bool secondaryInput;
     private bool towInput;
     private bool aimLockInput;
-    private bool boostInput;
+    //private bool boostInput;
     private bool isTowingInputDownThisFrame;
 
     private Rigidbody2D rb2d;
@@ -20,7 +21,8 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced
     private float nextThrustTime;
     private bool isLowThrust;
     private float shipRotationRads;
-    private float rotationDegrees;
+    [SerializeField] private float rads;
+    [SerializeField] private float rotationDegrees;
 
     private Vector2 thrust;
 
@@ -79,10 +81,11 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced
 
     private void GetInput()
     {
+        thrusterInput = playerInput.actions["Thruster"].ReadValue<float>();
         leftStickInput = playerInput.actions["Move"].ReadValue<Vector2>();
         fireInput = playerInput.actions["Fire"].ReadValue<float>() > 0;
         secondaryInput = playerInput.actions["Secondary"].ReadValue<float>() > 0;
-        boostInput = playerInput.actions["Boost"].ReadValue<float>() > 0;
+        //boostInput = playerInput.actions["Boost"].ReadValue<float>() > 0;
         var newTowInput = playerInput.actions["Tow"].ReadValue<float>() > 0;
         if (towInput == false && newTowInput == true)
         {
@@ -130,28 +133,40 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced
 
     private void CalculateThrust()
     {
+        var degs = rotationDegrees;
+        rads = Mathf.Deg2Rad * (degs);
+
+        float maxVelocityMagnitude = 20;
+        Vector2 targetVelocity = rb2d.velocity + new Vector2(Mathf.Sin(rads), Mathf.Cos(rads)) * maxVelocityMagnitude;
+        targetVelocity = Vector2.ClampMagnitude(targetVelocity, maxVelocityMagnitude);
+        thrust = (targetVelocity - rb2d.velocity) * thrusterInput * 20000 * Time.fixedDeltaTime;
+
         shipRotationRads = Mathf.Deg2Rad * (rotationDegrees + 90);
 
-        if (leftStickInput.y > 0)
+        if (thrusterInput > 0)
         {            
-            thrust = (new Vector2(-Mathf.Cos(shipRotationRads), Mathf.Sin(shipRotationRads))) * Time.fixedDeltaTime * THRUST_SPEED;
-            if (boostInput) thrust *= THRUST_BOOST_SPEED_MULTIPLIER;
-
+        //    thrust = (new Vector2(-Mathf.Cos(shipRotationRads), Mathf.Sin(shipRotationRads))) * Time.fixedDeltaTime * THRUST_SPEED;
             var fuelUsed = Time.fixedDeltaTime;
-            if (boostInput) fuelUsed *= THRUST_BOOST_SPEED_MULTIPLIER;
+
+        //    if (Mathf.Approximately(thrusterInput, 1f))
+        //    {
+        //        thrust *= THRUST_BOOST_SPEED_MULTIPLIER;
+        //        fuelUsed *= THRUST_BOOST_SPEED_MULTIPLIER;
+        //    }
 
             CanvasManager.Instance.ChangeFuelBar(-fuelUsed);
         }
-        else
-        {
-            thrust = Vector2.zero;
-        }
+        //else
+        //{
+        //    thrust = Vector2.zero;
+        //}
     }
 
     private void Move()
-    {
+    { 
         rb2d.AddForce(thrust);
     }
+
 
     private void DrawShip()
     {
@@ -203,7 +218,7 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced
             spriteRenderer.flipX = true;            
         }
 
-        if (leftStickInput.y > 0)
+        if (thrusterInput > 0)
         {
             if (Time.time > nextThrustTime)
             {
