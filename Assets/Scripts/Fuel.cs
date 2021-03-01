@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections;
+using UnityEngine;
 
 public class Fuel : MonoBehaviour, ITowable
 {
@@ -11,10 +13,25 @@ public class Fuel : MonoBehaviour, ITowable
         StopTow();
     }
 
-    public void StartTractor()
+    public IEnumerator StartTractor(GameObject tractorZone, EventHandler towableObjectReceivedEvent)
     {
         StopTow();
         Tractored = true;
+
+        while (transform.position.y > tractorZone.transform.position.y)
+        {
+            if (!Mathf.Approximately(transform.position.x, tractorZone.transform.position.x))
+            {
+                var newX = Mathf.MoveTowards(transform.position.x, tractorZone.transform.position.x, Time.deltaTime);
+                transform.position = new Vector3(newX, transform.position.y, transform.position.z);
+            }
+
+            transform.position += Vector3.down * Time.deltaTime;
+            yield return null;
+        }
+
+        towableObjectReceivedEvent?.Invoke(this, EventArgs.Empty);
+        Destroy(gameObject);
     }
 
     public void StartTow()

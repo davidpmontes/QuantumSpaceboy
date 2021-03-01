@@ -1,7 +1,11 @@
-﻿public interface ITowable
+﻿using System;
+using System.Collections;
+using UnityEngine;
+
+public interface ITowable
 {
     bool Tractored { get; }
-    void StartTractor();
+    IEnumerator StartTractor(GameObject tractorZone, EventHandler towableObjectReceivedEvent);
     void StartTow();
     void StopTow();
 }

@@ -28,7 +28,8 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced
     private const float THRUST_SPEED = 500000;
     private const float THRUST_BOOST_SPEED_MULTIPLIER = 2f;
 
-    private const float TOW_DISTANCE = 2f;
+    private const float TOW_DISTANCE_DETECTION = 3f;
+    private const float TOW_DISTANCE_PHYSICAL = 2f;
 
     private bool isTowing = false;
     private FrictionJoint2D frictionJoint2D;
@@ -248,7 +249,7 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced
             }
             else // was not towing so start towing
             {
-                Collider2D[] collider2DArr = Physics2D.OverlapCircleAll(transform.position, TOW_DISTANCE);
+                Collider2D[] collider2DArr = Physics2D.OverlapCircleAll(transform.position, TOW_DISTANCE_DETECTION);
                 foreach (Collider2D collider2D in collider2DArr)
                 {
                     if (collider2D.gameObject.layer == LayerMask.NameToLayer("towable"))
@@ -270,7 +271,7 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced
                         frictionJoint2D.enabled = true;
 
                         distanceJoint2D.connectedBody = towableRb2d;
-                        distanceJoint2D.distance = TOW_DISTANCE;
+                        distanceJoint2D.distance = TOW_DISTANCE_PHYSICAL;
                         distanceJoint2D.enabled = true;
                         break;
                     }
@@ -289,16 +290,12 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced
         }            
     }
 
-    public GameObject TractorTakesTowableObject()
+    public void TractorTakesTowableObject()
     {
-        GameObject towableObject = distanceJoint2D.connectedBody.gameObject;
-
         if (isTowing)
         {
             isTowing = false;
             lineRenderer.enabled = false;
-
-            distanceJoint2D.connectedBody.GetComponent<ITowable>().StartTractor();
 
             frictionJoint2D.connectedBody = null;
             frictionJoint2D.enabled = false;
@@ -306,8 +303,6 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced
             distanceJoint2D.connectedBody = null;
             distanceJoint2D.enabled = false;
         }
-
-        return towableObject;
     }
 
     private void UpdateTowLine()
