@@ -29,6 +29,9 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced
     private const float ROTATION_SPEED = 350f;
     private const float THRUST_SPEED = 500000;
     private const float THRUST_BOOST_SPEED_MULTIPLIER = 2f;
+    private const float INVINCIBLE_TIME = 1f;
+
+    private const float FUEL_USAGE_RATE = 0.03f;
 
     private const float TOW_DISTANCE_DETECTION = 3f;
     private const float TOW_DISTANCE_PHYSICAL = 2f;
@@ -45,6 +48,7 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced
     private IWeapon secondaryWeapon;
 
     [SerializeField] private GameObject secondaryTarget;
+    private float invincibleEndTime;
 
     public static Spaceboy Instance { get; private set; }
 
@@ -142,24 +146,9 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced
         thrust = (targetVelocity - rb2d.velocity) * thrusterInput * 20000 * Time.fixedDeltaTime;
 
         shipRotationRads = Mathf.Deg2Rad * (rotationDegrees + 90);
-
-        if (thrusterInput > 0)
-        {            
-        //    thrust = (new Vector2(-Mathf.Cos(shipRotationRads), Mathf.Sin(shipRotationRads))) * Time.fixedDeltaTime * THRUST_SPEED;
-            var fuelUsed = Time.fixedDeltaTime;
-
-        //    if (Mathf.Approximately(thrusterInput, 1f))
-        //    {
-        //        thrust *= THRUST_BOOST_SPEED_MULTIPLIER;
-        //        fuelUsed *= THRUST_BOOST_SPEED_MULTIPLIER;
-        //    }
-
-            CanvasManager.Instance.ChangeFuelBar(-fuelUsed);
-        }
-        //else
-        //{
-        //    thrust = Vector2.zero;
-        //}
+        
+        var fuelUsed = thrusterInput * FUEL_USAGE_RATE * Time.fixedDeltaTime;
+        CanvasManager.Instance.ChangeFuelBar(-fuelUsed);
     }
 
     private void Move()
@@ -170,6 +159,22 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced
 
     private void DrawShip()
     {
+        if (Time.time < invincibleEndTime)
+        {
+            if (spriteRenderer.color.a == 1)
+            {
+                spriteRenderer.color = new Color(1, 1, 1, 0);
+            }
+            else
+            {
+                spriteRenderer.color = new Color(1, 1, 1, 1);
+            }
+            
+        } else
+        {
+            spriteRenderer.color = new Color(1, 1, 1, 1);
+        }
+
         int idx = 0;
 
         float pieWidth = (360f / 32f);
@@ -282,7 +287,7 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced
 
                         frictionJoint2D.connectedBody = towableRb2d;
                         frictionJoint2D.autoConfigureConnectedAnchor = true;
-                        frictionJoint2D.maxForce = 100;
+                        frictionJoint2D.maxForce = 200;
                         frictionJoint2D.enabled = true;
 
                         distanceJoint2D.connectedBody = towableRb2d;
@@ -331,6 +336,42 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced
         if (collision.gameObject.TryGetComponent(out ICollectable collectableComponent))
         {
             collectableComponent.Collect();
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        Collide(collision);
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        Collide(collision);
+    }
+
+    private void Collide(Collision2D collision)
+    {
+        if (collision.gameObject.layer == LayerMask.NameToLayer("bounds")) return;
+
+        if (Time.time < invincibleEndTime)
+        {
+            return;
+        }
+        else
+        {
+            invincibleEndTime = Time.time + INVINCIBLE_TIME;
+        }
+
+        
+        var dot = Mathf.Abs(Vector2.Dot(collision.GetContact(0).normal, rb2d.velocity.normalized));
+        var fuelUsed = 1 + rb2d.velocity.magnitude * dot;
+        CanvasManager.Instance.ChangeFuelBar(-fuelUsed);
+
+        for (int i = 0; i < 3; i++)
+        {
+            var damageEffect = ObjectPool.Instance.GetFromPoolInactive(Pools.DamageEffect);
+            damageEffect.SetActive(true);
+            damageEffect.GetComponent<DamageEffect>().Init(transform.position, Random.Range(0, 360), 3 + rb2d.velocity.magnitude * dot);
         }
     }
 }

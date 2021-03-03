@@ -17,7 +17,6 @@ public class CanvasManager : MonoBehaviour
     {
         if (Mathf.Approximately(percent, 0f))
         {
-            Debug.Log("Can't change fuel by 0 percent.");
             return;
         }
 

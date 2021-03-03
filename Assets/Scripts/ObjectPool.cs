@@ -5,7 +5,8 @@ using UnityEngine;
 public enum Pools
 {
     Bullet,
-    HomingBullet
+    HomingBullet,
+    DamageEffect
 };
 
 public class ObjectPool : MonoBehaviour
