@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class Planet : MonoBehaviour, IDamageable
+public class Planet : MonoBehaviour, IEnemyDamageable
 {
     [SerializeField] private int life;
 

@@ -15,9 +15,14 @@ public class TileMapGenerator : MonoBehaviour
     {
         Random.InitState(1);
 
-        for (int x = -31; x < 25; x++)
+        var minX = tilemap.cellBounds.min.x;
+        var maxX = tilemap.cellBounds.min.x + tilemap.cellBounds.size.x;
+        var minY = tilemap.cellBounds.min.y;
+        var maxY = tilemap.cellBounds.min.y + tilemap.cellBounds.size.y;
+
+        for (int x = minX; x < maxX; x++)
         {
-            for (int y = -21; y < 11; y++)
+            for (int y = minY; y < maxY; y++)
             {
                 int rnd = Random.Range(0, tiles.Length);
 

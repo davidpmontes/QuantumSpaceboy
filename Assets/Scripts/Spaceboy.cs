@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class Spaceboy : MonoBehaviour, IGravityInfluenced
+public class Spaceboy : MonoBehaviour, IGravityInfluenced, ITower, IPlayerDamageable
 {
     private UnityEngine.InputSystem.PlayerInput playerInput;
     private float thrusterInput;
@@ -49,15 +49,15 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced
 
     [SerializeField] private GameObject secondaryTarget;
     private float invincibleEndTime;
+    private int idx;
 
-    public static Spaceboy Instance { get; private set; }
+    [SerializeField] private GameObject Sprite;
 
     void Awake()
     {
-        Instance = this;
         playerInput = GetComponent<UnityEngine.InputSystem.PlayerInput>();
         rb2d = GetComponent<Rigidbody2D>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        spriteRenderer = Sprite.GetComponent<SpriteRenderer>();
         frictionJoint2D = GetComponent<FrictionJoint2D>();
         distanceJoint2D = GetComponent<DistanceJoint2D>();
         lineRenderer = GetComponent<LineRenderer>();
@@ -72,7 +72,7 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced
         GetInput();
         Rotate();
         CalculateThrust();
-        DrawShip();
+        DrawShip();        
         Fire();
         Secondary();
         Tow();
@@ -80,7 +80,12 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced
 
     private void FixedUpdate()
     {
-        Move();
+        Move();        
+    }
+
+    private void LateUpdate()
+    {
+        RenderShipWithRigidbody();
     }
 
     private void GetInput()
@@ -107,7 +112,7 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced
         if (!fireInput)
             return;
 
-        primaryWeapon.Fire(shipRotationRads, rb2d, transform.position, secondaryTarget);
+        primaryWeapon.Fire(shipRotationRads, rb2d, transform.position, secondaryTarget, idx);
     }
 
     private void Secondary()
@@ -115,7 +120,7 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced
         if (!secondaryInput)
             return;
 
-        secondaryWeapon.Fire(shipRotationRads, rb2d, transform.position, secondaryTarget);
+        secondaryWeapon.Fire(shipRotationRads, rb2d, transform.position, secondaryTarget, idx);
     }
 
     private void Rotate()
@@ -148,7 +153,7 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced
         shipRotationRads = Mathf.Deg2Rad * (rotationDegrees + 90);
         
         var fuelUsed = thrusterInput * FUEL_USAGE_RATE * Time.fixedDeltaTime;
-        CanvasManager.Instance.ChangeFuelBar(-fuelUsed);
+        CanvasManager.Instance.UpdateFuelBar(idx, -fuelUsed);
     }
 
     private void Move()
@@ -246,6 +251,11 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced
         }
     }
 
+    private void RenderShipWithRigidbody()
+    {
+        Sprite.transform.position = PixelPerfectClamp.GetPixelPerfectClampV3(transform.position, 16);
+    }
+
     public void Influence(Vector2 force)
     {
         rb2d.AddForce(force);
@@ -281,9 +291,14 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced
 
                         var towableRb2d = collider2D.gameObject.GetComponent<Rigidbody2D>();
 
-                        isTowing = true;
+                        if (towableRb2d.GetComponent<ITowable>().IsBeingTowed)
+                        {
+                            continue;
+                        }
 
-                        towableRb2d.GetComponent<ITowable>().StartTow();
+                        towableRb2d.GetComponent<ITowable>().StartTow(this);
+
+                        isTowing = true;
 
                         frictionJoint2D.connectedBody = towableRb2d;
                         frictionJoint2D.autoConfigureConnectedAnchor = true;
@@ -310,7 +325,61 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced
         }            
     }
 
-    public void TractorTakesTowableObject()
+    private void UpdateTowLine()
+    {
+        lineRenderer.SetPosition(0, transform.position);
+        lineRenderer.SetPosition(1, distanceJoint2D.connectedBody.transform.position);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.TryGetComponent(out ICollectable collectableComponent))
+        {
+            collectableComponent.Collect(idx);
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        CollideWithTerrain(collision);
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        CollideWithTerrain(collision);
+    }
+
+    private void CollideWithTerrain(Collision2D collision)
+    {
+        if (collision.gameObject.layer == LayerMask.NameToLayer("bounds")) return;
+
+        if (Time.time < invincibleEndTime)
+        {
+            return;
+        }
+        else
+        {
+            invincibleEndTime = Time.time + INVINCIBLE_TIME;
+        }
+        
+        var dot = Mathf.Abs(Vector2.Dot(collision.GetContact(0).normal, rb2d.velocity.normalized));
+        var fuelUsed = 1 + rb2d.velocity.magnitude * dot;
+        CanvasManager.Instance.UpdateFuelBar(idx, -fuelUsed);
+
+        for (int i = 0; i < 3; i++)
+        {
+            var damageEffect = ObjectPool.Instance.GetFromPoolInactive(Pools.DamageEffect);
+            damageEffect.SetActive(true);
+            damageEffect.GetComponent<DamageEffect>().Init(transform.position, Random.Range(0, 360), 3 + rb2d.velocity.magnitude * dot);
+        }
+    }
+
+    public void SetIdx(int idx)
+    {
+        this.idx = idx;
+    }
+
+    public void RelinquishTow()
     {
         if (isTowing)
         {
@@ -325,53 +394,9 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced
         }
     }
 
-    private void UpdateTowLine()
+    public void DealDamage(int value)
     {
-        lineRenderer.SetPosition(0, transform.position);
-        lineRenderer.SetPosition(1, distanceJoint2D.connectedBody.transform.position);
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.gameObject.TryGetComponent(out ICollectable collectableComponent))
-        {
-            collectableComponent.Collect();
-        }
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        Collide(collision);
-    }
-
-    private void OnCollisionStay2D(Collision2D collision)
-    {
-        Collide(collision);
-    }
-
-    private void Collide(Collision2D collision)
-    {
-        if (collision.gameObject.layer == LayerMask.NameToLayer("bounds")) return;
-
-        if (Time.time < invincibleEndTime)
-        {
-            return;
-        }
-        else
-        {
-            invincibleEndTime = Time.time + INVINCIBLE_TIME;
-        }
-
-        
-        var dot = Mathf.Abs(Vector2.Dot(collision.GetContact(0).normal, rb2d.velocity.normalized));
-        var fuelUsed = 1 + rb2d.velocity.magnitude * dot;
-        CanvasManager.Instance.ChangeFuelBar(-fuelUsed);
-
-        for (int i = 0; i < 3; i++)
-        {
-            var damageEffect = ObjectPool.Instance.GetFromPoolInactive(Pools.DamageEffect);
-            damageEffect.SetActive(true);
-            damageEffect.GetComponent<DamageEffect>().Init(transform.position, Random.Range(0, 360), 3 + rb2d.velocity.magnitude * dot);
-        }
+        var fuelUsed = value;
+        CanvasManager.Instance.UpdateFuelBar(idx, -fuelUsed);
     }
 }

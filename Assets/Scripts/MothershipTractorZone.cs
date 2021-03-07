@@ -7,7 +7,7 @@ public class MothershipTractorZone : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Spaceboy.Instance.TractorTakesTowableObject();
+        //Spaceboy.Instance.TractorTakesTowableObject();
         if (collision.gameObject.TryGetComponent(out ITowable component))
         {
             StartCoroutine(component.StartTractor(gameObject, towableObjectReceivedEvent));

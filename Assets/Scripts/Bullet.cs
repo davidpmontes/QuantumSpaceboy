@@ -6,14 +6,16 @@ public class Bullet : MonoBehaviour
     private float lifespanSeconds = 5;
     private Vector2 velocity;
     private Rigidbody2D rb2d;
+    private int idx;
 
     private void Awake()
     {
         rb2d = GetComponent<Rigidbody2D>();
     }
 
-    public void Init(Vector2 position, Vector2 velocity)
+    public void Init(Vector2 position, Vector2 velocity, int idx)
     {
+        this.idx = idx;
         transform.position = position;
         this.velocity = velocity;
         StartCoroutine(DestroyAfterTime(lifespanSeconds));
@@ -28,10 +30,10 @@ public class Bullet : MonoBehaviour
     {
         if (collision.gameObject.TryGetComponent(out ICollectable collectableComponent))
         {
-            collectableComponent.Collect();
+            collectableComponent.Collect(idx);
         }
 
-        if (collision.gameObject.TryGetComponent(out IDamageable damageableComponent))
+        if (collision.gameObject.TryGetComponent(out IEnemyDamageable damageableComponent))
         {
             damageableComponent.DealDamage(1);
         }
@@ -44,10 +46,10 @@ public class Bullet : MonoBehaviour
     {
         if (collision.gameObject.TryGetComponent(out ICollectable collectableComponent))
         {
-            collectableComponent.Collect();
+            collectableComponent.Collect(idx);
         }
         
-        if (collision.gameObject.TryGetComponent(out IDamageable damageableComponent))
+        if (collision.gameObject.TryGetComponent(out IEnemyDamageable damageableComponent))
         {
             damageableComponent.DealDamage(1);
         }

@@ -17,7 +17,7 @@ public class BulletWeapon : MonoBehaviour, IWeapon
 
     }
 
-    public void Fire(float shipRotationRads, Rigidbody2D rb2d, Vector3 shipPosition, GameObject target)
+    public void Fire(float shipRotationRads, Rigidbody2D rb2d, Vector3 shipPosition, GameObject target, int idx)
     {        
         if (Time.time > nextFireTime)
         {
@@ -26,7 +26,7 @@ public class BulletWeapon : MonoBehaviour, IWeapon
             bullet.SetActive(true);
             var position = shipPosition + (new Vector3(-Mathf.Cos(shipRotationRads), Mathf.Sin(shipRotationRads))) * 0.6f;
             var velocity = rb2d.velocity + (new Vector2(-Mathf.Cos(shipRotationRads), Mathf.Sin(shipRotationRads))) * BULLET_SPEED * Time.fixedDeltaTime;
-            bullet.GetComponent<Bullet>().Init(position, velocity);
+            bullet.GetComponent<Bullet>().Init(position, velocity, idx);
         }
     }
 }

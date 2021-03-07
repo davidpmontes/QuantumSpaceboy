@@ -12,7 +12,7 @@ public class HomingBulletWeapon : MonoBehaviour, IWeapon
         nextFireTime = Time.time;
     }
 
-    public void Fire(float shipRotationRads, Rigidbody2D rb2d, Vector3 shipPosition, GameObject target)
+    public void Fire(float shipRotationRads, Rigidbody2D rb2d, Vector3 shipPosition, GameObject target, int idx)
     {
         if (Time.time > nextFireTime)
         {
@@ -21,7 +21,7 @@ public class HomingBulletWeapon : MonoBehaviour, IWeapon
             homingBullet.SetActive(true);
             var velocity = rb2d.velocity + (new Vector2(-Mathf.Cos(shipRotationRads), Mathf.Sin(shipRotationRads))) * BULLET_SPEED * Time.fixedDeltaTime;
             var position = shipPosition + (new Vector3(-Mathf.Cos(shipRotationRads), Mathf.Sin(shipRotationRads))) * 0.6f;
-            homingBullet.GetComponent<HomingBullet>().Init(position, velocity, target);
+            homingBullet.GetComponent<HomingBullet>().Init(position, velocity, target, idx);
         }
     }
 }

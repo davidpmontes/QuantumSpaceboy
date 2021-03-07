@@ -2,9 +2,9 @@
 
 public class GasCan : MonoBehaviour, ICollectable
 {
-    public void Collect()
+    public void Collect(int idx)
     {
-        CanvasManager.Instance.ChangeFuelBar(100f);
+        CanvasManager.Instance.UpdateFuelBar(idx, 100f);
         Destroy(gameObject);
     }
 }

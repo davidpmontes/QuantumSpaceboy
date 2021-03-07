@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class HomingBullet : MonoBehaviour
 {
+    private int idx;
     private float lifespanSeconds = 5;
     private Vector2 velocity;
     private Rigidbody2D rb2d;
@@ -13,8 +14,9 @@ public class HomingBullet : MonoBehaviour
         rb2d = GetComponent<Rigidbody2D>();
     }
 
-    public void Init(Vector2 position, Vector2 velocity, GameObject target)
+    public void Init(Vector2 position, Vector2 velocity, GameObject target, int idx)
     {
+        this.idx = idx;
         transform.position = position;
         this.velocity = velocity;
         this.target = target;
@@ -47,10 +49,10 @@ public class HomingBullet : MonoBehaviour
     {
         if (collision.gameObject.TryGetComponent(out ICollectable collectableComponent))
         {
-            collectableComponent.Collect();
+            collectableComponent.Collect(idx);
         }
 
-        if (collision.gameObject.TryGetComponent(out IDamageable damageableComponent))
+        if (collision.gameObject.TryGetComponent(out IEnemyDamageable damageableComponent))
         {
             damageableComponent.DealDamage(1);
         }
@@ -63,10 +65,10 @@ public class HomingBullet : MonoBehaviour
     {
         if (collision.gameObject.TryGetComponent(out ICollectable collectableComponent))
         {
-            collectableComponent.Collect();
+            collectableComponent.Collect(idx);
         }
 
-        if (collision.gameObject.TryGetComponent(out IDamageable damageableComponent))
+        if (collision.gameObject.TryGetComponent(out IEnemyDamageable damageableComponent))
         {
             damageableComponent.DealDamage(1);
         }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Item : MonoBehaviour, ICollectable
 {
-    public void Collect()
+    public void Collect(int idx)
     {
 
     }

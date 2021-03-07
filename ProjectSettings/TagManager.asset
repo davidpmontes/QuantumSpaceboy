@@ -16,12 +16,13 @@ TagManager:
   - ship
   - planet
   - bullet
-  - terrain
+  - enemy
   - towable
   - gascan
   - gravityField
   - tractorZone
   - bounds
+  - terrain
   - 
   - 
   - 
@@ -33,10 +34,9 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
-  - 
-  - 
+  - Cam All
+  - Cam Left
+  - Cam Right
   m_SortingLayers:
   - name: Default
     uniqueID: 0

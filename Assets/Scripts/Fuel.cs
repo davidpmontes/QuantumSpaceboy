@@ -5,7 +5,9 @@ using UnityEngine;
 public class Fuel : MonoBehaviour, ITowable
 {
     private Rigidbody2D rb2d;
+    private ITower tower;
     public bool Tractored { get; private set; }
+    public bool IsBeingTowed { get; private set; }
 
     private void Awake()
     {
@@ -34,14 +36,18 @@ public class Fuel : MonoBehaviour, ITowable
         Destroy(gameObject);
     }
 
-    public void StartTow()
+    public void StartTow(ITower tower)
     {
+        this.tower = tower;
+        IsBeingTowed = true;
         rb2d.gravityScale = 1;
         rb2d.bodyType = RigidbodyType2D.Dynamic;        
     }
 
     public void StopTow()
     {
+        IsBeingTowed = false;
+        tower?.RelinquishTow();
         rb2d.gravityScale = 0;
         rb2d.bodyType = RigidbodyType2D.Static;
     }
