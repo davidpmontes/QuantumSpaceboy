@@ -12,4 +12,10 @@ public class Planet : MonoBehaviour, IEnemyDamageable
             Destroy(gameObject);
         }
     }
+
+
+    public void DealDamage(int value, Vector2 normal, Vector3 position)
+    {
+        throw new System.NotImplementedException();
+    }
 }

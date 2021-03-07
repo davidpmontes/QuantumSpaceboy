@@ -35,7 +35,7 @@ public class Bullet : MonoBehaviour
 
         if (collision.gameObject.TryGetComponent(out IEnemyDamageable damageableComponent))
         {
-            damageableComponent.DealDamage(1);
+            damageableComponent.DealDamage(1, collision.GetContact(0).normal, transform.position);
         }
 
         StopAllCoroutines();

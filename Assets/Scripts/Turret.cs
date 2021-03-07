@@ -18,11 +18,6 @@ public class Turret : MonoBehaviour, IEnemyDamageable
         StartCoroutine(UpdateState());
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        
-    }
-
     private IEnumerator UpdateState()
     {
         while(true)
@@ -44,7 +39,7 @@ public class Turret : MonoBehaviour, IEnemyDamageable
         }
     }
 
-    public void DealDamage(int value)
+    public void DealDamage(int value, Vector2 normal, Vector3 position)
     {
         if (spriteRenderer.sprite == openedSprite)
         {
@@ -53,5 +48,15 @@ public class Turret : MonoBehaviour, IEnemyDamageable
             explosionGroup.GetComponent<ExplosionGroup>().Init(transform.position, 1, 5);
             Destroy(gameObject);
         }
+        else
+        {
+            var damageEffect = ObjectPool.Instance.GetFromPoolInactive(Pools.DamageEffect);
+            damageEffect.SetActive(true);
+            damageEffect.GetComponent<DamageEffect>().Init(position, normal, 5);
+        }
+    }
+
+    public void DealDamage(int value)
+    {
     }
 }

@@ -16,8 +16,14 @@ public class DamageEffect : MonoBehaviour
 
     public void Init(Vector2 position, float degrees, float speed)
     {
+        direction = new Vector2(Mathf.Cos(degrees * Mathf.Deg2Rad), Mathf.Sin(degrees * Mathf.Deg2Rad));
+        Init(position, direction, speed);
+    }
+
+    public void Init(Vector2 position, Vector2 direction, float speed)
+    {
         transform.position = position;
-        direction = new Vector2(Mathf.Cos(degrees * Mathf.Deg2Rad), Mathf.Sin(degrees * Mathf.Deg2Rad));        
+        this.direction = direction;
         this.speed = speed * 2;
         StopAllCoroutines();
         idx = 0;
