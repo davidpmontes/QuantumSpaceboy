@@ -48,6 +48,9 @@ public class Turret : MonoBehaviour, IEnemyDamageable
     {
         if (spriteRenderer.sprite == openedSprite)
         {
+            var explosionGroup = ObjectPool.Instance.GetFromPoolInactive(Pools.ExplosionGroup);
+            explosionGroup.SetActive(true);
+            explosionGroup.GetComponent<ExplosionGroup>().Init(transform.position, 1, 5);
             Destroy(gameObject);
         }
     }

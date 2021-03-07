@@ -7,7 +7,9 @@ public enum Pools
     Bullet,
     HomingBullet,
     DamageEffect,
-    EnemyBullet
+    EnemyBullet,
+    Explosion,
+    ExplosionGroup
 };
 
 public class ObjectPool : MonoBehaviour
