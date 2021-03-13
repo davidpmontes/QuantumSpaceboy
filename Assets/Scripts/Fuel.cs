@@ -14,7 +14,6 @@ public class Fuel : MonoBehaviour, ITowable
         rb2d = GetComponent<Rigidbody2D>();
         StopTow();
     }
-
     public IEnumerator StartTractor(GameObject tractorZone, EventHandler towableObjectReceivedEvent)
     {
         StopTow();

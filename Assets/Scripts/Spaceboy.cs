@@ -51,15 +51,13 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced, ITower, IPlayerDamage
     private float invincibleEndTime;
     private int idx;
 
-    [SerializeField] private GameObject Sprite;
-
     void Awake()
     {
         playerInput = GetComponent<UnityEngine.InputSystem.PlayerInput>();
         rb2d = GetComponent<Rigidbody2D>();
-        spriteRenderer = Sprite.GetComponent<SpriteRenderer>();
         frictionJoint2D = GetComponent<FrictionJoint2D>();
         distanceJoint2D = GetComponent<DistanceJoint2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
         lineRenderer = GetComponent<LineRenderer>();
         primaryWeapon = primaryWeaponGO.GetComponent<IWeapon>();
         primaryWeapon.Init();
@@ -81,11 +79,6 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced, ITower, IPlayerDamage
     private void FixedUpdate()
     {
         Move();        
-    }
-
-    private void LateUpdate()
-    {
-        RenderShipWithRigidbody();
     }
 
     private void GetInput()
@@ -249,11 +242,6 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced, ITower, IPlayerDamage
         {
             spriteRenderer.sprite = basicRotationSprites[idx];
         }
-    }
-
-    private void RenderShipWithRigidbody()
-    {
-        Sprite.transform.position = PixelPerfectClamp.GetPixelPerfectClampV3(transform.position, 16);
     }
 
     public void Influence(Vector2 force)

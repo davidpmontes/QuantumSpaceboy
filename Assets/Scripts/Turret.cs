@@ -22,8 +22,10 @@ public class Turret : MonoBehaviour, IEnemyDamageable
     {
         while(true)
         {
+            var randomClosedTime = Random.Range(1.5f, 2.5f);
+
             spriteRenderer.sprite = closedSprite;
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(randomClosedTime);
 
             spriteRenderer.sprite = halfwaySprite;
             yield return new WaitForSeconds(0.1f);
@@ -31,7 +33,7 @@ public class Turret : MonoBehaviour, IEnemyDamageable
             spriteRenderer.sprite = openedSprite;
             var enemyBullet = ObjectPool.Instance.GetFromPoolInactive(Pools.EnemyBullet);
             enemyBullet.SetActive(true);
-            enemyBullet.GetComponent<EnemyBullet>().Init(transform.position + Vector3.up * 1f, Vector2.up * 3);
+            enemyBullet.GetComponent<EnemyBullet>().Init(transform.position + transform.up * 1f, transform.up * 3);
             yield return new WaitForSeconds(0.5f);
 
             spriteRenderer.sprite = halfwaySprite;
