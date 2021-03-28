@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &7616234605172952782
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4549752124265329208}
+  - component: {fileID: 8451106428584596892}
+  m_Layer: 0
+  m_Name: GamePlayManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4549752124265329208
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7616234605172952782}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8451106428584596892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7616234605172952782}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d240a133af261b47809c0ac3a5b5c55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shipPrefab: {fileID: 5532786730480634662, guid: 9d27201fd37b32c4b83e5527d2fc79f7,
+    type: 3}
+  boundsPrefab: {fileID: 1915630486806547405, guid: 21801e09fdaab87468ac8b6d71968b1e,
+    type: 3}
+  camLeftBrainPrefab: {fileID: 4236281585245597380, guid: 288fc897169d90d42b68319f27400ed9,
+    type: 3}
+  camRightBrainPrefab: {fileID: 3417132565091001088, guid: aab4a56cb63ba0040809f4f7602c9b35,
+    type: 3}
+  camAllBrainPrefab: {fileID: 5034027414009610992, guid: 0b5d7dd5fe032964193d35ce66216cdb,
+    type: 3}
+  camLeftPrefab: {fileID: 2828696355768536423, guid: 18133e9de62ac8c4caa616b7a40cd958,
+    type: 3}
+  camRightPrefab: {fileID: 1939020641254063649, guid: ef4effdb6eb03e14b8ed39ee0ba02795,
+    type: 3}
+  camAllPrefab: {fileID: 1981376515434509922, guid: d06844877f9695c48be6d3cfecdbcaf1,
+    type: 3}

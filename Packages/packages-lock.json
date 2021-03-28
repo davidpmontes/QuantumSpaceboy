@@ -82,7 +82,7 @@
       "hash": "c32ec8ae525f5320964cb3eabdd47c54013e6d1a"
     },
     "com.unity.cinemachine": {
-      "version": "2.6.3",
+      "version": "2.6.4",
       "depth": 0,
       "source": "registry",
       "dependencies": {},

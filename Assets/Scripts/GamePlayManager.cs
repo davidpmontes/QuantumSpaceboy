@@ -2,10 +2,13 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerInputManagerController : MonoBehaviour
+public class GamePlayManager : MonoBehaviour
 {
-    [SerializeField] private GameObject boundsPrefab;
+    public static GamePlayManager Instance { get; private set; }
+
     [SerializeField] private GameObject shipPrefab;
+
+    [SerializeField] private GameObject boundsPrefab;
     [SerializeField] private InputDevice inputDevice;
 
     [SerializeField] private GameObject camLeftBrainPrefab;
@@ -24,7 +27,12 @@ public class PlayerInputManagerController : MonoBehaviour
     private GameObject rightCam;
     private GameObject allCam;
 
-    private void Start()
+    private void Awake()
+    {
+        Instance = this;
+    }
+
+    public void StartPlayer1()
     {
         Destroy(GameObject.Find("Camera"));
 
@@ -50,38 +58,13 @@ public class PlayerInputManagerController : MonoBehaviour
         rightCam.GetComponent<CinemachineConfiner>().m_BoundingShape2D = bounds.GetComponent<Collider2D>();
         allCam.GetComponent<CinemachineConfiner>().m_BoundingShape2D = bounds.GetComponent<Collider2D>();
 
-        PlayerInputManager.instance.playerPrefab = shipPrefab;
+        GameplayCanvasManager.Instance.SetLeftHUD(true);
+        GameplayCanvasManager.Instance.SetRightHUD(false);
 
-        CanvasManager.Instance.SetLeftHUD(true);
-        CanvasManager.Instance.SetRightHUD(false);
-    }
-
-    public void OnPlayerJoined(PlayerInput pi)
-    {
-        if (pi.playerIndex == 0)
-        {
-            allCam.GetComponent<CinemachineVirtualCamera>().Follow = pi.transform;
-            CameraMiddleMan.Instance.AddPlayer(pi.gameObject);
-            pi.GetComponent<Spaceboy>().SetIdx(0);
-        }
-        else if (pi.playerIndex == 1)
-        {
-            CanvasManager.Instance.SetRightHUD(true);
-
-            leftCam.GetComponent<CinemachineVirtualCamera>().Follow = allCam.GetComponent<CinemachineVirtualCamera>().Follow;
-            rightCam.GetComponent<CinemachineVirtualCamera>().Follow = pi.transform;
-            CameraMiddleMan.Instance.AddPlayer(pi.gameObject);
-            pi.GetComponent<Spaceboy>().SetIdx(1);
-
-            leftBrain.SetActive(true);
-            rightBrain.SetActive(true);
-            allBrain.SetActive(false);
-
-            leftCam.SetActive(true);
-            rightCam.SetActive(true);
-            allCam.SetActive(false);
-
-            PlayerInputManager.instance.DisableJoining();
-        }
+        var player1 = Instantiate(shipPrefab);
+        allCam.GetComponent<CinemachineVirtualCamera>().Follow = player1.transform;
+        CameraMiddleMan.Instance.AddPlayer(player1);
+        player1.GetComponent<Spaceboy>().SetPlayerInput(PlayerInputControllerManager.Instance.PlayerInput1.GetComponent<IPlayerInput>());
+        player1.GetComponent<Spaceboy>().SetIdx(0);
     }
 }

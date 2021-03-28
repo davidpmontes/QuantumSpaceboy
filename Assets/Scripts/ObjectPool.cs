@@ -14,13 +14,13 @@ public enum Pools
 
 public class ObjectPool : MonoBehaviour
 {
+    public static ObjectPool Instance { get; private set; }
+
     public GameObject[] prefabs;
     private Dictionary<string, Queue<GameObject>> dictOfPools;
     private Dictionary<string, GameObject> dictOfPrefabs;
 
-    public static ObjectPool Instance { get; private set; }
-
-    private void Awake()
+    public void Init()
     {
         Instance = this;
 

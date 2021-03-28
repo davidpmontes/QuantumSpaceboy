@@ -153,17 +153,6 @@
                 },
                 {
                     "name": "",
-                    "id": "8c6763e8-303c-4ad0-9c22-c69a4e605af8",
-                    "path": "<Keyboard>/t",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Tow",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "c7a19978-9743-4e72-ad9b-2d864317ae87",
                     "path": "<Gamepad>/buttonNorth",
                     "interactions": "",
@@ -309,6 +298,17 @@
             "devices": [
                 {
                     "devicePath": "<XRController>",
+                    "isOptional": false,
+                    "isOR": false
+                }
+            ]
+        },
+        {
+            "name": "Pads",
+            "bindingGroup": "Pads",
+            "devices": [
+                {
+                    "devicePath": "<Gamepad>",
                     "isOptional": false,
                     "isOR": false
                 }

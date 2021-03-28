@@ -2,16 +2,23 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MainMenuCanvasManager : MonoBehaviour
+public class MenuCanvasManager : MonoBehaviour
 {
-    public static MainMenuCanvasManager Instance { get; private set; }
+    public static MenuCanvasManager Instance { get; private set; }
     [SerializeField] private Image fadeToBlackPanel;
     [SerializeField] private GameObject titleScreen;
     [SerializeField] private GameObject startScreen;
+    private Canvas canvas;
 
     public void Init()
     {
         Instance = this;
+        canvas = GetComponent<Canvas>();
+    }
+
+    public void SetCanvasVisibility(bool isVisible)
+    {
+        canvas.enabled = isVisible;
     }
 
     public void ShowTitleScreen()

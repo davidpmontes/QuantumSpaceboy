@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
-public class CanvasManager : MonoBehaviour
+public class GameplayCanvasManager : MonoBehaviour
 {
-    public static CanvasManager Instance { get; private set; }
+    public static GameplayCanvasManager Instance { get; private set; }
 
     [SerializeField] private GameObject leftHUD;
     [SerializeField] private GameObject rightHUD;

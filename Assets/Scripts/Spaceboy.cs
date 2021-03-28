@@ -1,16 +1,9 @@
 ﻿using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Spaceboy : MonoBehaviour, IGravityInfluenced, ITower, IPlayerDamageable
 {
-    private UnityEngine.InputSystem.PlayerInput playerInput;
-    private float thrusterInput;
-    private Vector2 leftStickInput;
-    private bool fireInput;
-    private bool secondaryInput;
-    private bool towInput;
-    private bool aimLockInput;
-    //private bool boostInput;
-    private bool isTowingInputDownThisFrame;
+    private IPlayerInput playerInput;
 
     private Rigidbody2D rb2d;
     private SpriteRenderer spriteRenderer;
@@ -53,7 +46,6 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced, ITower, IPlayerDamage
 
     void Awake()
     {
-        playerInput = GetComponent<UnityEngine.InputSystem.PlayerInput>();
         rb2d = GetComponent<Rigidbody2D>();
         frictionJoint2D = GetComponent<FrictionJoint2D>();
         distanceJoint2D = GetComponent<DistanceJoint2D>();
@@ -67,13 +59,12 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced, ITower, IPlayerDamage
 
     void Update()
     {
-        GetInput();
         Rotate();
         CalculateThrust();
         DrawShip();        
         Fire();
         Secondary();
-        Tow();
+        UpdateTowing();
     }
 
     private void FixedUpdate()
@@ -81,43 +72,27 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced, ITower, IPlayerDamage
         Move();        
     }
 
-    private void GetInput()
-    {
-        thrusterInput = playerInput.actions["Thruster"].ReadValue<float>();
-        leftStickInput = playerInput.actions["Move"].ReadValue<Vector2>();
-        fireInput = playerInput.actions["Fire"].ReadValue<float>() > 0;
-        secondaryInput = playerInput.actions["Secondary"].ReadValue<float>() > 0;
-        //boostInput = playerInput.actions["Boost"].ReadValue<float>() > 0;
-        var newTowInput = playerInput.actions["Tow"].ReadValue<float>() > 0;
-        if (towInput == false && newTowInput == true)
-        {
-            isTowingInputDownThisFrame = true;
-        }
-        else
-        {
-            isTowingInputDownThisFrame = false;
-        }
-        towInput = newTowInput;
-    }
 
     private void Fire()
     {
-        if (!fireInput)
-            return;
-
-        primaryWeapon.Fire(shipRotationRads, rb2d, transform.position, secondaryTarget, idx);
+        if (playerInput.PrimaryFireInput())
+        {
+            primaryWeapon.Fire(shipRotationRads, rb2d, transform.position, secondaryTarget, idx);
+        }
     }
 
     private void Secondary()
     {
-        if (!secondaryInput)
-            return;
-
-        secondaryWeapon.Fire(shipRotationRads, rb2d, transform.position, secondaryTarget, idx);
+        if (playerInput.SecondaryFireInput())
+        {
+            secondaryWeapon.Fire(shipRotationRads, rb2d, transform.position, secondaryTarget, idx);
+        }
     }
 
     private void Rotate()
     {
+        var leftStickInput = playerInput.GetLeftStickInput();
+
         if (leftStickInput.x > 0)
         {
             rotationDegrees += Time.deltaTime * ROTATION_SPEED;
@@ -135,6 +110,8 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced, ITower, IPlayerDamage
 
     private void CalculateThrust()
     {
+        var thrusterInput = playerInput.GetThrusterInput();
+
         var degs = rotationDegrees;
         rads = Mathf.Deg2Rad * (degs);
 
@@ -146,7 +123,7 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced, ITower, IPlayerDamage
         shipRotationRads = Mathf.Deg2Rad * (rotationDegrees + 90);
         
         var fuelUsed = thrusterInput * FUEL_USAGE_RATE * Time.fixedDeltaTime;
-        CanvasManager.Instance.UpdateFuelBar(idx, -fuelUsed);
+        GameplayCanvasManager.Instance.UpdateFuelBar(idx, -fuelUsed);
     }
 
     private void Move()
@@ -154,9 +131,10 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced, ITower, IPlayerDamage
         rb2d.AddForce(thrust);
     }
 
-
     private void DrawShip()
     {
+        var thrusterInput = playerInput.GetThrusterInput();
+
         if (Time.time < invincibleEndTime)
         {
             if (spriteRenderer.color.a == 1)
@@ -249,59 +227,62 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced, ITower, IPlayerDamage
         rb2d.AddForce(force);
     }
 
-    private void Tow()
+    private void Tow(InputAction.CallbackContext ctx)
     {
-        if (isTowingInputDownThisFrame)
+        //if (playerInput.TowInput())
+        //{
+        if (isTowing) // Was towing so now disconnecting
         {
-            if (isTowing) // Was towing so now disconnecting
+            isTowing = false;
+
+            distanceJoint2D.connectedBody.GetComponent<ITowable>().StopTow();
+
+            frictionJoint2D.connectedBody = null;
+            frictionJoint2D.enabled = false;
+
+            distanceJoint2D.connectedBody = null;
+            distanceJoint2D.enabled = false;
+        }
+        else // was not towing so start towing
+        {
+            Collider2D[] collider2DArr = Physics2D.OverlapCircleAll(transform.position, TOW_DISTANCE_DETECTION);
+            foreach (Collider2D collider2D in collider2DArr)
             {
-                isTowing = false;
-
-                distanceJoint2D.connectedBody.GetComponent<ITowable>().StopTow();
-
-                frictionJoint2D.connectedBody = null;
-                frictionJoint2D.enabled = false;
-
-                distanceJoint2D.connectedBody = null;
-                distanceJoint2D.enabled = false;
-            }
-            else // was not towing so start towing
-            {
-                Collider2D[] collider2DArr = Physics2D.OverlapCircleAll(transform.position, TOW_DISTANCE_DETECTION);
-                foreach (Collider2D collider2D in collider2DArr)
+                if (collider2D.gameObject.layer == LayerMask.NameToLayer("towable"))
                 {
-                    if (collider2D.gameObject.layer == LayerMask.NameToLayer("towable"))
+                    if (collider2D.gameObject.GetComponent<ITowable>().Tractored)
                     {
-                        if (collider2D.gameObject.GetComponent<ITowable>().Tractored)
-                        {
-                            continue;
-                        }
-
-                        var towableRb2d = collider2D.gameObject.GetComponent<Rigidbody2D>();
-
-                        if (towableRb2d.GetComponent<ITowable>().IsBeingTowed)
-                        {
-                            continue;
-                        }
-
-                        towableRb2d.GetComponent<ITowable>().StartTow(this);
-
-                        isTowing = true;
-
-                        frictionJoint2D.connectedBody = towableRb2d;
-                        frictionJoint2D.autoConfigureConnectedAnchor = true;
-                        frictionJoint2D.maxForce = 200;
-                        frictionJoint2D.enabled = true;
-
-                        distanceJoint2D.connectedBody = towableRb2d;
-                        distanceJoint2D.distance = TOW_DISTANCE_PHYSICAL;
-                        distanceJoint2D.enabled = true;
-                        break;
+                        continue;
                     }
+
+                    var towableRb2d = collider2D.gameObject.GetComponent<Rigidbody2D>();
+
+                    if (towableRb2d.GetComponent<ITowable>().IsBeingTowed)
+                    {
+                        continue;
+                    }
+
+                    towableRb2d.GetComponent<ITowable>().StartTow(this);
+
+                    isTowing = true;
+
+                    frictionJoint2D.connectedBody = towableRb2d;
+                    frictionJoint2D.autoConfigureConnectedAnchor = true;
+                    frictionJoint2D.maxForce = 200;
+                    frictionJoint2D.enabled = true;
+
+                    distanceJoint2D.connectedBody = towableRb2d;
+                    distanceJoint2D.distance = TOW_DISTANCE_PHYSICAL;
+                    distanceJoint2D.enabled = true;
+                    break;
                 }
             }
         }
+        //}
+    }
 
+    private void UpdateTowing()
+    {
         if (isTowing)
         {
             lineRenderer.enabled = true;
@@ -352,7 +333,7 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced, ITower, IPlayerDamage
         
         var dot = Mathf.Abs(Vector2.Dot(collision.GetContact(0).normal, rb2d.velocity.normalized));
         var fuelUsed = 1 + rb2d.velocity.magnitude * dot;
-        CanvasManager.Instance.UpdateFuelBar(idx, -fuelUsed);
+        GameplayCanvasManager.Instance.UpdateFuelBar(idx, -fuelUsed);
 
         for (int i = 0; i < 3; i++)
         {
@@ -360,6 +341,12 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced, ITower, IPlayerDamage
             damageEffect.SetActive(true);
             damageEffect.GetComponent<DamageEffect>().Init(transform.position, Random.Range(0, 360), 3 + rb2d.velocity.magnitude * dot);
         }
+    }
+
+    public void SetPlayerInput(IPlayerInput playerInput)
+    {
+        this.playerInput = playerInput;
+        playerInput.RegisterTowStartEvent(Tow);
     }
 
     public void SetIdx(int idx)
@@ -385,6 +372,6 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced, ITower, IPlayerDamage
     public void DealDamage(int value)
     {
         var fuelUsed = value;
-        CanvasManager.Instance.UpdateFuelBar(idx, -fuelUsed);
+        GameplayCanvasManager.Instance.UpdateFuelBar(idx, -fuelUsed);
     }
 }
