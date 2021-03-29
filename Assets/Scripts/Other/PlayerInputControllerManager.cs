@@ -4,14 +4,18 @@ using UnityEngine.InputSystem;
 public class PlayerInputControllerManager : MonoBehaviour
 {
     public static PlayerInputControllerManager Instance { get; private set; }
-    
-    public PlayerInput PlayerInput1 { get; private set; }
-    public PlayerInput PlayerInput2 { get; private set; }
+    private PlayerInput playerInput1;
+    private PlayerInput playerInput2;
 
-    private void Awake()
+    public void Init()
     {
         Instance = this;
     }
+
+    public PlayerInput SubscribeToPlayer1()
+    {
+        return playerInput1;
+    }    
 
     public void OnPlayerJoined(PlayerInput pi)
     {
@@ -20,12 +24,12 @@ public class PlayerInputControllerManager : MonoBehaviour
         if (pi.playerIndex == 0)
         {
             pi.GetComponent<QSBPlayerInput>().Init();
-            MainMenuManager.Instance.SetPlayerInput(pi.GetComponent<IPlayerInput>());
-            PlayerInput1 = pi;
+            //MainMenuManager.Instance.SetPlayerInput(pi.GetComponent<IPlayerInput>());
+            playerInput1 = pi;
         }
         else if (pi.playerIndex == 1)
         {
-            PlayerInput2 = pi;
+            playerInput2 = pi;
         //    Debug.Log(1);
         //    GameplayCanvasManager.Instance.SetRightHUD(true);
 

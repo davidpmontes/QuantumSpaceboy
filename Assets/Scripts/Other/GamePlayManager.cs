@@ -64,7 +64,7 @@ public class GamePlayManager : MonoBehaviour
         var player1 = Instantiate(shipPrefab);
         allCam.GetComponent<CinemachineVirtualCamera>().Follow = player1.transform;
         CameraMiddleMan.Instance.AddPlayer(player1);
-        player1.GetComponent<Spaceboy>().SetPlayerInput(PlayerInputControllerManager.Instance.PlayerInput1.GetComponent<IPlayerInput>());
+        player1.GetComponent<Spaceboy>().SetPlayerInput(PlayerInputControllerManager.Instance.SubscribeToPlayer1().GetComponent<IPlayerInput>());
         player1.GetComponent<Spaceboy>().SetIdx(0);
     }
 }
