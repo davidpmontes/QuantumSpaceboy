@@ -440,8 +440,6 @@ MonoBehaviour:
     type: 3}
   menuManagerPrefab: {fileID: 6257213262933961855, guid: ee6a032069362e34985cdba2ac57c6ee,
     type: 3}
-  gameplayCanvasManagerPrefab: {fileID: 380533606488780682, guid: cfd25d56ffae7d14eb08ef7eb7c82207,
-    type: 3}
   gameplayManagerPrefab: {fileID: 7616234605172952782, guid: 3bfb87e7c6f66974886c08b6fe02a6b2,
     type: 3}
   tileMapManagerPrefab: {fileID: 3063906885818045065, guid: 25d17f01260a8404686dc973b39a16a9,

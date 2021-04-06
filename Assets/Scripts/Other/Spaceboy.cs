@@ -89,6 +89,16 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced, ITower, IPlayerDamage
         }
     }
 
+    private void OnUpInput(InputAction.CallbackContext ctx)
+    {
+
+    }
+
+    private void OnDownInput(InputAction.CallbackContext ctx)
+    {
+
+    }
+
     private void Rotate()
     {
         var leftStickInput = playerInput.GetLeftStickInput();
@@ -225,12 +235,10 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced, ITower, IPlayerDamage
     public void Influence(Vector2 force)
     {
         rb2d.AddForce(force);
-    }
+    }    
 
-    private void Tow(InputAction.CallbackContext ctx)
+    private void OnTowInput(InputAction.CallbackContext ctx)
     {
-        //if (playerInput.TowInput())
-        //{
         if (isTowing) // Was towing so now disconnecting
         {
             isTowing = false;
@@ -346,7 +354,7 @@ public class Spaceboy : MonoBehaviour, IGravityInfluenced, ITower, IPlayerDamage
     public void SetPlayerInput(IPlayerInput playerInput)
     {
         this.playerInput = playerInput;
-        playerInput.RegisterTowStartEvent(Tow);
+        playerInput.RegisterTowStartEvent(OnTowInput);
     }
 
     public void SetIdx(int idx)

@@ -4,4 +4,19 @@
 	{
 		PauseMenu.Show();		
 	}
+
+    public override void OnStartButtonPressed()
+    {
+        
+    }
+
+    public override void OnUpButtonPressed()
+    {
+        
+    }
+
+    public override void OnDownButtonPressed()
+    {
+        
+    }
 }

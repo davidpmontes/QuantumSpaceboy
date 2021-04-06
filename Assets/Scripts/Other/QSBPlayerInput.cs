@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 
 public class QSBPlayerInput : MonoBehaviour, IPlayerInput
 {
-    private PlayerInput playerInput;
+    private PlayerInput playerInput;    
 
     public void Init()
     {
@@ -18,6 +18,26 @@ public class QSBPlayerInput : MonoBehaviour, IPlayerInput
     public void RegisterStartEvent(System.Action<InputAction.CallbackContext> function)
     {
         playerInput.actions["Start"].started += function;
+    }
+
+    public void RegisterUpEvent(System.Action<InputAction.CallbackContext> function)
+    {
+        playerInput.actions["Up"].performed += function;
+    }
+
+    public void RegisterDownEvent(System.Action<InputAction.CallbackContext> function)
+    {
+        playerInput.actions["Down"].performed += function;
+    }
+
+    public void RegisterLeftEvent(System.Action<InputAction.CallbackContext> function)
+    {
+        playerInput.actions["Left"].performed += function;
+    }
+
+    public void RegisterRightEvent(System.Action<InputAction.CallbackContext> function)
+    {
+        playerInput.actions["Right"].performed += function;
     }
 
     public float GetThrusterInput()

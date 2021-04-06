@@ -7,9 +7,8 @@ public class ApplicationManager : MonoBehaviour
     [SerializeField] private GameObject objectPoolPrefab = default;
     [SerializeField] private GameObject playerInputManagerControllerPrefab = default;
     [SerializeField] private GameObject menuManagerPrefab = default;
-    [SerializeField] private GameObject gameplayCanvasManagerPrefab = default;
+
     [SerializeField] private GameObject gameplayManagerPrefab = default;
-    //[SerializeField] private GameObject mainMenuManagerPrefab = default;
     [SerializeField] private GameObject tileMapManagerPrefab = default;
     [SerializeField] private GameObject worldObjectsPrefab = default;
 
@@ -21,17 +20,13 @@ public class ApplicationManager : MonoBehaviour
         Instantiate(objectPoolPrefab).GetComponent<ObjectPool>().Init();
         Instantiate(playerInputManagerControllerPrefab).GetComponent<PlayerInputControllerManager>().Init();
         Instantiate(menuManagerPrefab);
-        //Instantiate(menuCanvasManager).GetComponent<MenuCanvasManager>().Init();
-        //Instantiate(mainMenuManagerPrefab).GetComponent<MainMenuManager>().Init();
     }
 
     public void StartPlaying()
     {
-        //MainMenuManager.Instance.enabled = false;
-        //MenuCanvasManager.Instance.SetCanvasVisibility(false);
         Instantiate(tileMapManagerPrefab);
-        Instantiate(worldObjectsPrefab);
-        Instantiate(gameplayCanvasManagerPrefab);
+        var wo = Instantiate(worldObjectsPrefab);
+        wo.GetComponent<WorldObjectsGroupManager>().InitBattle1();
         Instantiate(gameplayManagerPrefab);
         GamePlayManager.Instance.StartPlayer1();
     }

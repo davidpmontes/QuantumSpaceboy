@@ -8,13 +8,14 @@ public class MenuManager : MonoBehaviour
 {
 	[SerializeField] private SplashMenu1 SplashMenu1Prefab;
 	[SerializeField] private SplashMenu2 SplashMenu2Prefab;
-	[SerializeField] private MainMenu MainMenuPrefab;
 	[SerializeField] private GameMenu GameMenuPrefab;
-	[SerializeField] private PauseMenu PauseMenuPrefab;
-	[SerializeField] private OptionsMenu OptionsMenuPrefab;
-	[SerializeField] private AwesomeMenu AwesomeMenuPrefab;
 
-    private readonly Stack<Menu> menuStack = new Stack<Menu>();
+	//[SerializeField] private MainMenu MainMenuPrefab;
+	//[SerializeField] private PauseMenu PauseMenuPrefab;
+	//[SerializeField] private OptionsMenu OptionsMenuPrefab;
+	//[SerializeField] private AwesomeMenu AwesomeMenuPrefab;
+
+	private readonly Stack<Menu> menuStack = new Stack<Menu>();
 
     public static MenuManager Instance { get; set; }
 
@@ -37,13 +38,25 @@ public class MenuManager : MonoBehaviour
         }
 
 		playerInput = PlayerInputControllerManager.Instance.SubscribeToPlayer1().GetComponent<IPlayerInput>();
-		playerInput.RegisterStartEvent(StartButton);
+		playerInput.RegisterStartEvent(OnStartButton);
+		playerInput.RegisterUpEvent(OnUpButton);
+		playerInput.RegisterDownEvent(OnDownButton);
 	}
 
-	private void StartButton(InputAction.CallbackContext ctx)
+	private void OnStartButton(InputAction.CallbackContext ctx)
     {
 		menuStack.Peek().OnStartButtonPressed();
     }
+
+	private void OnUpButton(InputAction.CallbackContext ctx)
+    {
+		menuStack.Peek().OnUpButtonPressed();
+	}
+
+	private void OnDownButton(InputAction.CallbackContext ctx)
+	{
+		menuStack.Peek().OnDownButtonPressed();
+	}
 
 	private void OnDestroy()
     {

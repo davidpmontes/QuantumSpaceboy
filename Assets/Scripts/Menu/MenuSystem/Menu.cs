@@ -4,11 +4,6 @@ public abstract class Menu<T> : Menu where T : Menu<T>
 {
     public static T Instance { get; private set; }
 
-	public override void OnStartButtonPressed()
-	{
-		Debug.Log(typeof(T).ToString());
-	}
-
 	protected virtual void Awake()
     {
         Instance = (T)this;
@@ -19,6 +14,26 @@ public abstract class Menu<T> : Menu where T : Menu<T>
         Instance = null;
 	}
 
+    public override void OnOpen()
+    {
+        
+    }
+
+    public override void OnStartButtonPressed()
+	{
+
+	}
+
+	public override void OnUpButtonPressed()
+	{
+
+	}
+
+	public override void OnDownButtonPressed()
+	{
+
+	}
+
 	protected static void Open()
 	{
 		if (Instance == null)
@@ -27,6 +42,7 @@ public abstract class Menu<T> : Menu where T : Menu<T>
 			Instance.gameObject.SetActive(true);
 
 		MenuManager.Instance.OpenMenu(Instance);
+		Instance.OnOpen();
 	}
 
 	protected static void Close()
@@ -55,6 +71,8 @@ public abstract class Menu : MonoBehaviour
 	public bool DisableMenusUnderneath = true;
 
 	public abstract void OnBackPressed();
-
 	public abstract void OnStartButtonPressed();
+    public abstract void OnUpButtonPressed();
+	public abstract void OnDownButtonPressed();
+	public abstract void OnOpen();	
 }
